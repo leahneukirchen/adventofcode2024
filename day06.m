@@ -45,7 +45,7 @@ step({DRow,DCol}, {Row,Col}, {NRow, NCol}) :-
 :- pred walk(array2d(char)::in, bool::out,
     {int,int}::in, {int,int}::out,
     {int,int}::in, {int,int}::out,
-    array2d(maybe({int,int}))::di, array2d(maybe({int,int}))::uo) is det.
+    array2d(maybe({int,int}))::di, array2d(maybe({int,int}))::uo) is semidet.
 walk(Array, Loop, !Position, !Direction, !Visited) :-
     {Row, Col} = !.Position,
     {DRow, DCol} = !.Direction,
@@ -61,7 +61,7 @@ walk(Array, Loop, !Position, !Direction, !Visited) :-
         ),
         ( if array2d.in_bounds(Array, Row+DRow, Col+DCol) then
             ( if Array^elem(Row+DRow, Col+DCol) = '#' then
-                ( rotate(!Direction) -> true ; error("impossible") )
+                rotate(!Direction)
             else
                 step(!.Direction, !Position)
             ),
@@ -106,7 +106,8 @@ part2(Array0, Result) :-
     Visited0 = array2d.init(MaxRow, MaxCol, no),
     unsafe_promise_unique(Visited0, Visited1),
     walk(Array, Loop, {Row, Col}, _, {-1,0}, _, Visited1, _),
-    ( if Loop = yes then Result = {BlockRow,BlockCol} else fail ).
+    Loop = yes,
+    Result = {BlockRow,BlockCol}.
 
 main(!IO) :-
     read_lines(Rows, [], !IO),
