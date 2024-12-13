@@ -89,7 +89,7 @@ defrag2(Idx, !Areas) :-
 checksum2(Areas) =
     list.foldl(func(Area, {Sum, Index}) =
         ( if Area = data(Len, Idx) then
-            {Sum + Idx * list.foldl(int.plus, Index..(Index+Len-1), 0), Index + Len}
+            {Sum + Idx * int.fold_up(int.plus, Index, Index+Len-1, 0), Index + Len}
         else if Area = free(Len) then
             {Sum, Index + Len}
         else
